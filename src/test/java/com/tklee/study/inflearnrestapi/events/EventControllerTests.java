@@ -36,11 +36,12 @@ public class EventControllerTests {
     @Autowired
     ObjectMapper objectMapper;
 
+
     @Test
-    public void createEvent() throws Exception {
+    public void createEvent_BadRequest() throws Exception {
         //Given
         Event event = Event.builder()
-                .id(100)
+                .id(10)
                 .name("Spring")
                 .description("REST API Develoment with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2019,02,21,14,00))
@@ -51,7 +52,30 @@ public class EventControllerTests {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("가양역 우림비즈나인")
-                .eventStatus(EventStatus.PUBLISHED)
+                .build();
+
+        mockMvc.perform(post("/api/events/")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(event)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createEvent() throws Exception {
+        //Given
+        EventDto event = EventDto.builder()
+                .name("Spring")
+                .description("REST API Develoment with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2019,02,21,14,00))
+                .endEnrollmentDateTime(LocalDateTime.of(2019,02,21,14,00))
+                .beginEventDateTime(LocalDateTime.of(2019,02,21,14,00))
+                .endEventDateTime(LocalDateTime.of(2019,02,21,14,00))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("가양역 우림비즈나인")
                 .build();
 
         mockMvc.perform(post("/api/events/")
