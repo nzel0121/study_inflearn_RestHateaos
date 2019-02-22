@@ -28,4 +28,44 @@ public class EventTest {
         assertThat(event.getDescription()).isEqualTo(description);
     }
 
+    @Test
+    public void testFree(){
+        //Given
+        Event event = Event.builder()
+                        .basePrice(0)
+                        .maxPrice(0)
+                        .build();
+
+        //When
+        event.update();
+
+        //Then
+        assertThat(event.isFree()).isTrue();
+
+        event = Event.builder()
+                    .basePrice(100)
+                    .maxPrice(0)
+                    .build();
+
+        event.update();
+
+        assertThat(event.isFree()).isFalse();
+    }
+
+    @Test
+    public void testOffline(){
+        Event event = Event.builder()
+                        .location("가양역 투썸")
+                        .build();
+
+        event.update();
+
+        assertThat(event.isOffline()).isTrue();
+
+        event = Event.builder()
+                    .build();
+
+        assertThat(event.isOffline()).isFalse();
+    }
+
 }
