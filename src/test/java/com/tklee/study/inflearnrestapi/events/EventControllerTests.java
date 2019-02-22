@@ -2,6 +2,7 @@ package com.tklee.study.inflearnrestapi.events;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tklee.study.inflearnrestapi.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,7 @@ public class EventControllerTests {
     ObjectMapper objectMapper;
 
     @Test
+    @TestDescription("정상적으로 이벤트 생성을 호출한 테스트")
     public void createEvent() throws Exception {
         //Given
         EventDto event = EventDto.builder()
@@ -66,6 +68,7 @@ public class EventControllerTests {
     }
 
     @Test
+    @TestDescription("들어오면 안되는 케이스에 대해 BadRequest를 되돌려주는지에 대한 테스트")
     public void createEvent_BadRequest() throws Exception {
         //Given
         Event event = Event.builder()
