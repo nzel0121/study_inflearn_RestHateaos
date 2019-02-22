@@ -1,18 +1,11 @@
 package com.tklee.study.inflearnrestapi.events;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
 
-public class EventResource extends ResourceSupport {
+public class EventResource extends Resource<Event> {
 
-    @JsonUnwrapped
-    private Event event;
-
-    public EventResource(Event event) {
-        this.event = event;
-    }
-
-    public Event getEvent() {
-        return event;
+    public EventResource(Event content, Link... links) {
+        super(content, links);
     }
 }
