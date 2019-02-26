@@ -1,6 +1,9 @@
 package com.tklee.study.inflearnrestapi.accounts;
 
+import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 public class AccountServiceTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Autowired
     AccountService accountService;
@@ -51,11 +57,12 @@ public class AccountServiceTest {
 
     @Test
     public void findByUsernameFail(){
+        // Expected
         String username = "random@random.com";
-        try{
-            this.accountService.loadUserByUsername(username);
-        }catch (UsernameNotFoundException e){
-            assertThat(e.getMessage()).containsSequence(username);
-        }
+        expectedException.expect(UsernameNotFoundException.class);
+        expectedException.expectMessage(Matchers.containsString(username));
+
+        // When
+        this.accountService.loadUserByUsername(username);
     }
 }
