@@ -1,5 +1,6 @@
 package com.tklee.study.inflearnrestapi.events;
 
+import com.tklee.study.inflearnrestapi.accounts.AccountAdapter;
 import com.tklee.study.inflearnrestapi.common.ErrorResource;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,10 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -82,10 +87,15 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler<Event> assembler){
+    public ResponseEntity queryEvents(Pageable pageable,
+                                      PagedResourcesAssembler<Event> assembler,
+                                      @AuthenticationPrincipal AccountAdapter currentUser){
         Page<Event> page = this.eventRepository.findAll(pageable);
         PagedResources<Resource<Event>> pagedResources = assembler.toResource(page , event -> new EventResource(event));
         pagedResources.add(new Link("/docs/index.html#resource-events-list").withRel("profile"));
+        if (currentUser != null) {
+            pagedResources.add(linkTo(EventController.class).withRel("create-event"));
+        }
         return ResponseEntity.ok(pagedResources);
     }
 
