@@ -5,11 +5,13 @@ import com.tklee.study.inflearnrestapi.accounts.Account;
 import com.tklee.study.inflearnrestapi.accounts.AccountRepository;
 import com.tklee.study.inflearnrestapi.accounts.AccountRoles;
 import com.tklee.study.inflearnrestapi.accounts.AccountService;
+import com.tklee.study.inflearnrestapi.common.AppProperties;
 import com.tklee.study.inflearnrestapi.common.BaseControllerTest;
 import com.tklee.study.inflearnrestapi.common.TestDescription;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebFlux;
 import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
@@ -44,9 +46,12 @@ public class EventControllerTests extends BaseControllerTest {
     @Autowired
     AccountRepository accountRepository;
 
+    @Autowired
+    AppProperties appProperties;
+
     @Before
     public void setUp(){
-        this. eventRepository.deleteAll();
+        this.eventRepository.deleteAll();
         this.accountRepository.deleteAll();
     }
 
@@ -141,26 +146,20 @@ public class EventControllerTests extends BaseControllerTest {
     private String getAccessToken() throws Exception {
         // Given
         Set<AccountRoles> roles = new HashSet<AccountRoles>();
-        roles.add(AccountRoles.ADMIN);
         roles.add(AccountRoles.USER);
 
-        String username = "2tk.java2@gmail.com";
-        String password = "tklee";
         Account tklee = Account.builder()
-                .email(username)
-                .password(password)
+                .email(appProperties.getUserUsername())
+                .password(appProperties.getUserPassword())
                 .roles(roles)
                 .build();
 
         this.accountService.saveAccount(tklee);
 
-        String clientId = "myApp";
-        String clientSecret = "pass";
-
         ResultActions perform = this.mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", username)
-                .param("password", password)
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password"));
         String responseBody = perform.andReturn().getResponse().getContentAsString();
         Jackson2JsonParser parser = new Jackson2JsonParser();

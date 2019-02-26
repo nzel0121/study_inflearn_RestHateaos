@@ -1,8 +1,10 @@
 package com.tklee.study.inflearnrestapi.configs;
 
 import com.tklee.study.inflearnrestapi.accounts.Account;
+import com.tklee.study.inflearnrestapi.accounts.AccountRepository;
 import com.tklee.study.inflearnrestapi.accounts.AccountRoles;
 import com.tklee.study.inflearnrestapi.accounts.AccountService;
+import com.tklee.study.inflearnrestapi.common.AppProperties;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -36,18 +38,32 @@ public class AppConfig {
             @Autowired
             AccountService accountService;
 
+            @Autowired
+            AppProperties appProperties;
+
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                Set<AccountRoles> roles = new HashSet<AccountRoles>();
-                roles.add(AccountRoles.ADMIN);
-                roles.add(AccountRoles.USER);
 
-                Account tklee = Account.builder()
-                        .email("2tk.java@gmail.com")
-                        .password("tklee")
-                        .roles(roles)
+                Set<AccountRoles> adminRoles = new HashSet<AccountRoles>();
+                adminRoles.add(AccountRoles.ADMIN);
+                adminRoles.add(AccountRoles.USER);
+
+                Set<AccountRoles> userRoles = new HashSet<AccountRoles>();
+                userRoles.add(AccountRoles.USER);
+
+                Account admin = Account.builder()
+                        .email(appProperties.getAdminUsername())
+                        .password(appProperties.getAdminPassword())
+                        .roles(adminRoles)
                         .build();
-                accountService.saveAccount(tklee);
+                accountService.saveAccount(admin);
+
+                Account user = Account.builder()
+                        .email(appProperties.getUserUsername())
+                        .password(appProperties.getUserPassword())
+                        .roles(userRoles)
+                        .build();
+                accountService.saveAccount(user);
             }
         };
     }
