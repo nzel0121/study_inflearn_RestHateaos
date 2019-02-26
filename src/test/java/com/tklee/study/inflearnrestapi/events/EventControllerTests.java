@@ -127,7 +127,7 @@ public class EventControllerTests extends BaseControllerTest {
                                 fieldWithPath("free").description("it tells if this event is free"),
                                 fieldWithPath("offline").description("it tells if this event is offline"),
                                 fieldWithPath("eventStatus").description("event status"),
-                                fieldWithPath("manager").description("i don't know yet"),
+                                fieldWithPath("manager.id").description("this is manager(owner)'s id"),
                                 fieldWithPath("_links.self.href").description("this link is self"),
                                 fieldWithPath("_links.query-events.href").description("this link is query-events"),
                                 fieldWithPath("_links.update-event.href").description("this link is update-event"),
@@ -235,7 +235,7 @@ public class EventControllerTests extends BaseControllerTest {
     }
 
     @Test
-    @TestDescription("인증정보를 가지고 30개의 이벤트를 10개씩 두번째 페이지 조회하기 ")
+    @TestDescription("인증 정보를 가지고 30개의 이벤트를 10개씩 두번째 페이지 조회하기 ")
     public void queryEventsWithAuthentication() throws Exception {
         IntStream.range(0,30).forEach(this::generateEvent);
 
