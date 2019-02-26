@@ -49,9 +49,13 @@ public class AccountServiceTest {
 
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test
     public void findByUsernameFail(){
         String username = "random@random.com";
-        this.accountService.loadUserByUsername(username);
+        try{
+            this.accountService.loadUserByUsername(username);
+        }catch (UsernameNotFoundException e){
+            assertThat(e.getMessage()).containsSequence(username);
+        }
     }
 }
